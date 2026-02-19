@@ -32,8 +32,8 @@ while True:
         offset_x = 0
         offset_y = 0
     bp = cv2.calcBackProject([hsv], [0], hist, [0, 180], 1)
-    _, filtered_bp = cv2.threshold(bp, 200, 255, cv2.THRESH_BINARY)
-    M = cv2.moments(filtered_bp)
+    #_, filtered_bp = cv2.threshold(bp, 200, 255, cv2.THRESH_BINARY)
+    M = cv2.moments(bp)
     tez_x = int(M["m10"] / M["m00"]) + offset_x
     tez_y = int(M["m01"] / M["m00"]) + offset_y
     x1 = int(tez_x - template_w/2)

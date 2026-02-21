@@ -7,6 +7,7 @@ clear = lambda: os.system('cls')
 clear()
 plt.close('all')
 
+
 cap = cv2.VideoCapture('/home/vaclav/GitHub/UZO/images/cv02_hrnecek.mp4')
 template = cv2.imread("/home/vaclav/GitHub/UZO/images/cv02_vzor_hrnecek.bmp")
 template_h, template_w = template.shape[:2]

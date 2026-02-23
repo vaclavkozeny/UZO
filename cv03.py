@@ -14,28 +14,19 @@ def rotate(image, angle):
     angle_rad = math.radians(angle)
     cos_theta = math.cos(angle_rad)
     sin_theta = math.sin(angle_rad)
-    if len(image.shape) == 3:
-        rotated_image = np.zeros((height, width, image.shape[2]), dtype=image.dtype)
-    else:
-        rotated_image = np.zeros((height, width), dtype=image.dtype)
+    rotated_image = np.zeros((height, width, image.shape[2]), dtype=image.dtype)
     for y_new in range(height):
         for x_new in range(width):
-            
-            # Posun souřadnic tak, aby střed rotace byl v bodě (0, 0)
             x_shifted = x_new - center[0]
             y_shifted = y_new - center[1]
             
-            # Aplikace INVERZNÍ rotační matice pro nalezení původních souřadnic
-            # Rovnice vycházejí z násobení inverzní maticí
             x_orig_float = x_shifted * cos_theta + y_shifted * sin_theta + center[0]
             y_orig_float = -x_shifted * sin_theta + y_shifted * cos_theta + center[1]
             
-            # Zaokrouhlení na nejbližší celý pixel (Metoda Nearest Neighbor)
             x_orig_int = int(round(x_orig_float))
             y_orig_int = int(round(y_orig_float))
             
             if 0 <= x_orig_int < width and 0 <= y_orig_int < height:
-                # Přiřazení barvy ze zdrojového obrázku do nového
                 rotated_image[y_new, x_new] = image[y_orig_int, x_orig_int]
 
     return rotated_image

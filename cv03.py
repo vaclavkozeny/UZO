@@ -2,10 +2,10 @@ import cv2
 import math
 import numpy as np
 def main():
-    image = cv2.imread("../cv03_robot.bmp")
+    image = cv2.imread("images/cv03_robot.bmp")
     cv2.imshow("",image)
     cv2.waitKey()
-    image = rotate(image, 45)
+    image = rotate(image, 0)
     cv2.imshow("",image)
     cv2.waitKey()
 
@@ -30,9 +30,9 @@ def getRotationMatrix2D(center,angle):
 def rotate(image, angle):
     width, height = image.shape[:2]
     center = (width // 2, height // 2)
-    print(image)
-    print(cv2.getRotationMatrix2D(center, angle,1))
-    print(getRotationMatrix2D(center, angle))
+    #print(image)
+    #print(cv2.getRotationMatrix2D(center, angle,1))
+    #print(getRotationMatrix2D(center, angle))
     rotation_mat=getRotationMatrix2D(center, angle)
     # rotation calculates the cos and sin, taking absolutes of those.
     abs_cos = abs(rotation_mat[0, 0])
@@ -47,7 +47,19 @@ def rotate(image, angle):
     # středem nového většího obrázku, vzniklém otočením
     rotation_mat[0, 2] += bound_w / 2 - center[0]
     rotation_mat[1, 2] += bound_h / 2 - center[1]
-    return cv2.warpAffine(image, np.array(rotation_mat), (bound_w, bound_h))
+    return manual_warpAffine(image, np.array(rotation_mat), (bound_w, bound_h))
 
+def manual_warpAffine(image, M, size):
+    h, w = size
+    new_image = np.zeros((h, w, 3), dtype=image.dtype)
+    M_inv = np.linalg.inv(np.vstack([M, [0,0,1]]))[:2,:]
+    for y in range(h):
+        for x in range(w):
+            src = np.dot(M_inv, [x, y, 1])
+            src_x, src_y = int(round(src[0])), int(round(src[1]))
+            if 0 <= src_x < image.shape[1] and 0 <= src_y < image.shape[0]:
+                new_image[y, x] = image[src_y, src_x]
+
+    return new_image
 if __name__ == "__main__":
     main()

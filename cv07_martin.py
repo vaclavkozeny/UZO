@@ -86,7 +86,7 @@ def mass(arr):
         print("Souřadnice X:"+str(x),",Y:"+str(y)+", mince:"+vysl)
 
 if __name__ == "__main__":
-    image = cv2.imread("cv07_segmentace.bmp")
+    image = cv2.imread(".img/cv07_segmentace.bmp")
     segm_image=segment(image)#*255
     iden_arr=identification(segm_image)
     mass(convert_to_num(iden_arr))

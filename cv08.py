@@ -4,31 +4,16 @@ import numpy as np
 from scipy.signal import find_peaks
 
 def main():
-    img_o = cv2.imread("images/cv07_segmentace.bmp")
-    img = segmentace(img_o)
-    img, roots = barveni(img)
-    #barveni(img)
-    tez = teziste(img, roots)
+    img_o = cv2.imread("images/cv08_im1.bmp", cv2.IMREAD_GRAYSCALE)
+    img = (img_o>95).astype(np.uint8)
+    img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, np.ones((5,5), np.uint8))
+    img = 1 - img
+    img, uniq = barveni(img)
+    tez = teziste(img, uniq)
     print(tez)
-    print(soucet_hodnot(tez))
-    plt.imshow(hodnota_do_obrazku(teziste_do_obrazku(img_o, tez), tez))
+    plt.imshow(teziste_do_obrazku(img,tez))
     plt.show()
 
-def segmentace(img):
-    R = img[:,:,2].astype(float)
-    G = img[:,:,1].astype(float)
-    B = img[:,:,0].astype(float)
-
-    g = (G * 255)/(R+G+B)
-    threshold = 105
-    """
-    hist = plt.hist(g.ravel(), 256)
-    print(hist)
-    threshold = find_peaks(hist)
-    print(threshold)
-    """
-    mask = (g < threshold).astype(np.uint8)
-    return mask
 
 def barveni(img):
     #img = cv2.imread("images/cv07_barveni.bmp", cv2.IMREAD_GRAYSCALE)
@@ -82,12 +67,13 @@ def barveni(img):
             sets.append(merged_set)
     label_mapping = {}
     unique_colors = set()
+    #print(sets)
     for s in sets:
         min_val = min(s)
         for val in s:
             label_mapping[val] = min_val
             unique_colors.add(min_val)
-    print(unique_colors)
+    #print(label_mapping)
     for i in range(rows):
         for j in range(cols):
             val = colors[i][j]
@@ -97,12 +83,13 @@ def barveni(img):
     return colors, unique_colors
 def teziste(img, colors):
     tez = {}
+    #print(colors)
     for i in colors:
         maska = (img == i).astype(np.uint8)
         M = cv2.moments(maska)
         cx = int(M["m10"] / M["m00"])
         cy = int(M["m01"] / M["m00"])
-        tez[int(i)] = {"teziste":(cx,cy), "hodnota":5 if M["m00"] > 4000 else 1}
+        tez[int(i)] = {"teziste":(cx,cy)}
     return tez
 def teziste_do_obrazku(img, tez):
     for _, value in tez.items():
